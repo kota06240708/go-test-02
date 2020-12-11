@@ -16,7 +16,7 @@ logs:
 # goのログを表示
 .PHONY: logs-go
 logs-go:
-	docker logs -f go-test-api-01_golang_1
+	docker logs -f golang-container
 
 # cronのログを表示
 .PHONY: logs-cron

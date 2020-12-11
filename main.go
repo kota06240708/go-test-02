@@ -1,20 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	handler "github.com/api/handler/rest"
+	"github.com/api/infra/persistence"
+	"github.com/api/usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	engine := gin.Default()
-	engine.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "hello world",
-		})
-	})
-	engine.Run(":4000")
+	todoPersistence := persistence.NewTodoPersistence()
+	todoUseCase := usecase.NewTodoUseCase(todoPersistence)
+	todoHandler := handler.NewTodokHandler(todoUseCase)
 
-	fmt.Println("test")
+	engine := gin.Default()
+	engine.GET("/", todoHandler.Index)
+	engine.Run(":4000")
 }
