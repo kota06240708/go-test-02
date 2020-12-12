@@ -9,6 +9,6 @@ type Good struct {
 	PostId int `json:"postId" binding:"-"`
 }
 
-func (Post) TableName() string {
+func (Good) TableName() string {
 	return "goods"
 }
