@@ -52,6 +52,7 @@ func (th todoHandler) Index(c *gin.Context) {
 
 	//取得したドメインモデルをresponseに変換
 	res := new(response)
+
 	for _, todo := range todos {
 		var tf TodoField
 		tf.Id = int64(todo.Id)
