@@ -12,6 +12,6 @@ type User struct {
 	Posts []*Post `json:"posts" binding:"-"`
 }
 
-func (User) TableName() string {
+func (u *User) TableName() string {
 	return "users"
 }

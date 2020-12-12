@@ -5,12 +5,12 @@ package model
 type Post struct {
 	Model
 
-	UserId int    `json:"userId" binding:"-"`
-	Text   int    `json:"text" binding:"-"`
-	User   User   `json:"user" binding:"-"`
-	Goods  []Good `json:"goods" gorm:"many2many:goods;" binding:"-"`
+	UserId int     `json:"userId" binding:"-"`
+	Text   int     `json:"text" binding:"-"`
+	User   User    `json:"user" binding:"-"`
+	Goods  []*Good `json:"goods" gorm:"many2many:goods;" binding:"-"`
 }
 
-func (Post) TableName() string {
+func (p *Post) TableName() string {
 	return "posts"
 }
