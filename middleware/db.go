@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -9,11 +10,11 @@ import (
 )
 
 func SetDB(c *gin.Context) {
-	DBHost := "mysql"
+	DBHost := os.Getenv("MYSQL_HOST")
 	DBPort := "3306"
-	DBName := "golang"
-	DBUser := "golang"
-	DBPass := "golang"
+	DBName := os.Getenv("MYSQL_DATABASE")
+	DBUser := os.Getenv("MYSQL_USER")
+	DBPass := os.Getenv("MYSQL_PASSWORD")
 
 	// dbとの接続データを格納
 	dbConnection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", DBUser, DBPass, DBHost, DBPort, DBName)

@@ -32,14 +32,17 @@ func StartRouter() *gin.Engine {
 	// ルーティング
 	// =====================================
 
-	v1 := engine.Group("v1")
+	api := engine.Group("api")
 	{
-		// example
-		v1.GET("/example", todoHandler.Index)
+		v1 := api.Group("v1")
+		{
+			// example
+			v1.GET("/example", todoHandler.Index)
 
-		// user
-		v1.GET("/users", userHandler.GetUserAll)
-		v1.POST("/user", userHandler.AddUser)
+			// user
+			v1.GET("/users", userHandler.GetUserAll)
+			v1.POST("/user", userHandler.AddUser)
+		}
 	}
 
 	return engine

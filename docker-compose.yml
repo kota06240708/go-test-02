@@ -8,6 +8,8 @@ services:
     tty: true
     ports:
       - '4000:4000'
+    env_file:
+      - .env
     depends_on:
       - mysql
       - redis
@@ -33,9 +35,9 @@ services:
       - ./db/data:/var/log/mysql
       - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: golang
-      MYSQL_USER: golang # 使わないけど一応記述
-      MYSQL_PASSWORD: golang # 使わないけど一応記述
-      MYSQL_DATABASE: golang # 使わないけど一応記述
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER} # 使わないけど一応記述
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} # 使わないけど一応記述
+      MYSQL_DATABASE: ${MYSQL_DATABASE} # 使わないけど一応記述
     container_name: mysql-container
 
