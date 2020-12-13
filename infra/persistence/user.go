@@ -26,6 +26,19 @@ func (user UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
 	return users, err
 }
 
+// ログインユーザーを取得
+func (user UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.User, error) {
+
+	var currentUser *model.User
+	// good := model.Good{}
+	// post := model.Post{}
+
+	// ユーザー全て取得
+	err := DB.Select("name, age, icon, email").Preload("Posts").Where("email = ?", email).First(&currentUser).Error
+
+	return currentUser, err
+}
+
 // ユーザー情報登録
 func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error {
 
