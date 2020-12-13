@@ -5,11 +5,13 @@ package model
 type User struct {
 	Model
 
-	Name  string  `json:"name"`
-	Age   int     `json:"age"`
-	Icon  string  `json:"icon"`
-	Goods []*Good `json:"goods" gorm:"many2many:goods;" binding:"-"`
-	Posts []*Post `json:"posts" binding:"-"`
+	Name     string  `json:"name"`
+	Age      int     `json:"age"`
+	Icon     string  `json:"icon"`
+	Email    string  `json:"email"`
+	Password string  `json:"password"`
+	Goods    []*Good `json:"goods" gorm:"many2many:goods;" binding:"-"`
+	Posts    []*Post `json:"posts" binding:"-"`
 }
 
 func (u *User) TableName() string {

@@ -27,12 +27,14 @@ func (user UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
 }
 
 // ユーザー情報登録
-func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon string) error {
+func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error {
 
 	setUser := model.User{
-		Name: name,
-		Age:  age,
-		Icon: icon,
+		Name:     name,
+		Age:      age,
+		Icon:     icon,
+		Password: password,
+		Email:    email,
 	}
 
 	// ユーザー情報を登録

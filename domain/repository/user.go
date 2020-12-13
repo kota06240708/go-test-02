@@ -9,5 +9,5 @@ import (
 type UserRepository interface {
 	GetAll(DB *gorm.DB) ([]*model.User, error)
 	// GetCurrentUser(DB *gorm.DB, c *gin.Context) (model.User, error)
-	AddUser(DB *gorm.DB, name string, age int, icon string) error
+	AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error
 }

@@ -46,12 +46,15 @@ func (uh userHandler) GetUserAll(c *gin.Context) {
 	c.JSON(http.StatusOK, &users)
 }
 
+// ユーザーを追加
 func (uh userHandler) AddUser(c *gin.Context) {
 	//request：TodoAPIのパラメータ
 	type TRequset struct {
-		Name string `json:"name" validate:"required"`
-		Age  int    `json:"age" validate:"required"`
-		Icon string `json:"icon" validate:"required"`
+		Name     string `json:"name" validate:"required"`
+		Age      int    `json:"age" validate:"required"`
+		Icon     string `json:"icon" validate:"required"`
+		Password string `json:"password" validate:"required"`
+		Email    string `json:"email" validate:"required"`
 	}
 
 	var req TRequset
@@ -67,8 +70,16 @@ func (uh userHandler) AddUser(c *gin.Context) {
 		return
 	}
 
+	// パスワードを暗号化
+	password, errPass := util.PasswordEncrypt(req.Password)
+
+	if errPass != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errPass.Error()})
+		return
+	}
+
 	// DBにデータを追加
-	errDB := uh.userUseCase.AddUser(DB, req.Name, req.Age, req.Icon)
+	errDB := uh.userUseCase.AddUser(DB, req.Name, req.Age, req.Icon, password, req.Email)
 
 	if errDB != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})

@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(255) NOT NULL COMMENT 'ユーザーID',
   `post_id` INT NOT NULL COMMENT '投稿ID',
+  `isGood` BOOLEAN NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   `deleted_at` DATETIME,

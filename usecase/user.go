@@ -9,7 +9,7 @@ import (
 
 type UserUseCase interface {
 	GetUserAll(*gorm.DB) ([]*model.User, error)
-	AddUser(DB *gorm.DB, name string, age int, icon string) error
+	AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error
 }
 
 type userUseCase struct {
@@ -36,9 +36,9 @@ func (uu userUseCase) GetUserAll(DB *gorm.DB) ([]*model.User, error) {
 }
 
 // userデータを追加するユースケース
-func (uu userUseCase) AddUser(DB *gorm.DB, name string, age int, icon string) (err error) {
+func (uu userUseCase) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) (err error) {
 	// DBにデータを追加
-	err = uu.userRepository.AddUser(DB, name, age, icon)
+	err = uu.userRepository.AddUser(DB, name, age, icon, password, email)
 
 	return err
 }
