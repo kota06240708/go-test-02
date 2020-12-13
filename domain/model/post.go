@@ -8,7 +8,7 @@ type Post struct {
 	UserId int     `json:"userId" binding:"-"`
 	Text   int     `json:"text" binding:"-"`
 	User   User    `json:"user" binding:"-"`
-	Goods  []*Good `json:"goods" gorm:"many2many:goods;" binding:"-"`
+	Goods  []*Good `json:"goods" binding:"-"`
 }
 
 func (p *Post) TableName() string {

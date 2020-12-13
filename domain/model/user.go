@@ -10,7 +10,7 @@ type User struct {
 	Icon     string  `json:"icon"`
 	Email    string  `json:"email"`
 	Password string  `json:"password"`
-	Goods    []*Good `json:"goods" gorm:"many2many:goods;" binding:"-"`
+	Goods    []*Good `json:"goods" binding:"-"`
 	Posts    []*Post `json:"posts" binding:"-"`
 }
 

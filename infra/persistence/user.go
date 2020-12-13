@@ -17,11 +17,11 @@ func NewUserPersistence() repository.UserRepository {
 func (user UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
 
 	var users []*model.User
-	good := model.Good{}
-	post := model.Post{}
+	// good := model.Good{}
+	// post := model.Post{}
 
 	// ユーザー全て取得
-	err := DB.Find(&users).Preload(good.TableName()).Preload(post.TableName()).Error
+	err := DB.Select("name, age, icon, email").Preload("Posts").Find(&users).Error
 
 	return users, err
 }
