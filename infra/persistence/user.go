@@ -13,15 +13,20 @@ func NewUserPersistence() repository.UserRepository {
 	return &UserPersistence{}
 }
 
+// ユーザーを取得する時のクエリー
+func getUserQuery(DB *gorm.DB) *gorm.DB {
+	query := `id, name, age, icon, email, created_at, updated_at`
+
+	return DB.Select(query)
+}
+
 // ユーザー情報全て取得
 func (user UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
 
 	var users []*model.User
-	// good := model.Good{}
-	// post := model.Post{}
 
 	// ユーザー全て取得
-	err := DB.Select("name, age, icon, email").Preload("Posts").Find(&users).Error
+	err := DB.Scopes(getUserQuery).Preload("Posts").Preload("Goods").Find(&users).Error
 
 	return users, err
 }
@@ -30,11 +35,9 @@ func (user UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
 func (user UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.User, error) {
 
 	var currentUser *model.User
-	// good := model.Good{}
-	// post := model.Post{}
 
-	// ユーザー全て取得
-	err := DB.Select("name, age, icon, email").Preload("Posts").Where("email = ?", email).First(&currentUser).Error
+	// メールでユーザーを絞り込む
+	err := DB.Scopes(getUserQuery).Preload("Posts").Preload("Goods").Where("email = ?", email).First(&currentUser).Error
 
 	return currentUser, err
 }
