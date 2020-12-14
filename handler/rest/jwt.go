@@ -105,7 +105,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 			}
 
 			// refreshTokenデータに格納
-			c.Set("refreshToken", TRefreshToken{
+			c.Set("refreshToken", &TRefreshToken{
 				Token:  rStr,
 				Expire: expire,
 			})
@@ -133,11 +133,11 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 		// ログイン時に返すres
 		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
 			// dbを取得
-			refreshToken := c.MustGet("refreshToken").(*model.RefreshToken)
+			refreshToken := c.MustGet("refreshToken").(*TRefreshToken)
 
 			c.JSON(code, gin.H{
 				"token":        token,
-				"refreshToken": refreshToken.Token,
+				"refreshToken": &refreshToken.Token,
 				"expire":       expire.Format(time.RFC3339),
 			})
 		},
