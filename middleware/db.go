@@ -13,7 +13,7 @@ import (
 
 func SetDB(c *gin.Context) {
 	DBHost := os.Getenv("MYSQL_HOST")
-	DBPort := "3306"
+	DBPort := os.Getenv("MYSQL_PORT")
 	DBName := os.Getenv("MYSQL_DATABASE")
 	DBUser := os.Getenv("MYSQL_USER")
 	DBPass := os.Getenv("MYSQL_PASSWORD")

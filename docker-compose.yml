@@ -36,8 +36,9 @@ services:
       - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER} # 使わないけど一応記述
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD} # 使わないけど一応記述
-      MYSQL_DATABASE: ${MYSQL_DATABASE} # 使わないけど一応記述
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     container_name: mysql-container
 
