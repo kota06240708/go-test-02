@@ -10,7 +10,6 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"github.com/theckman/go-securerandom"
 )
 
@@ -53,7 +52,7 @@ var maxRefresh = time.Hour * 24 * 30 * 6
 // ユーザー認証
 func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 	var authMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
-		Realm:      "test zone",
+		Realm:      "chats",
 		Key:        []byte("secret key"),
 		Timeout:    time.Hour * 24 * 30,
 		MaxRefresh: maxRefresh,
@@ -66,7 +65,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 		// 一番はじめにここに入る
 		Authenticator: func(c *gin.Context) (interface{}, error) {
 			// dbを取得
-			DB := c.MustGet("db").(*gorm.DB)
+			DB := util.DB(c)
 
 			var loginVal TLoginReq
 
@@ -98,9 +97,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 			}
 
 			// リフレッシュトークンをDBに格納
-			errRefreshToken := jh.refreshTokenUseCase.AddRefreshToken(DB, rStr, &expire)
-
-			if errRefreshToken != nil {
+			if errRefreshToken := jh.refreshTokenUseCase.AddRefreshToken(DB, rStr, &expire); errRefreshToken != nil {
 				return nil, jwt.ErrFailedAuthentication
 			}
 
@@ -151,7 +148,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 		IdentityHandler: func(c *gin.Context) interface{} {
 
 			// dbを取得
-			DB := c.MustGet("db").(*gorm.DB)
+			DB := util.DB(c)
 
 			// tokenの中身を確認
 			claims := jwt.ExtractClaims(c)
@@ -177,7 +174,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 			if v, ok := data.(*model.User); ok {
 
 				// ログインしたユーザー情報をginに格納
-				c.Set("currentUser", v)
+				util.SetCurrentUser(c, v)
 				return true
 			}
 
@@ -210,7 +207,7 @@ func (jh jwtHandler) RefreshToken(c *gin.Context) {
 	var req TRefreshTokenReq
 
 	// DBを定義
-	DB := c.MustGet("db").(*gorm.DB)
+	DB := util.DB(c)
 
 	// reqを取得
 	if err := util.GetRequest(c, &req); err != nil {

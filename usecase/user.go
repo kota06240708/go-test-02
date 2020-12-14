@@ -26,7 +26,7 @@ func NewUserseCase(uu repository.UserRepository) UserUseCase {
 	}
 }
 
-// userデータを全件取得するためのユースケース
+// ユーザーデータを全件取得するためのユースケース
 func (uu userUseCase) GetUserAll(DB *gorm.DB) ([]*model.User, error) {
 	// DBからデータを全て取得
 	users, err := uu.userRepository.GetAll(DB)

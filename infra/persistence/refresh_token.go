@@ -34,7 +34,7 @@ func (refreshToken RefreshTokenPersistence) CheckRefreshToken(DB *gorm.DB, token
 
 	var setRefreshToken model.RefreshToken
 
-	// リフレッシュトークンを作成
+	// リフレッシュトークンをチェック
 	err := DB.Where("token = ? and expire > ?", token, time.Now()).First(&setRefreshToken).Error
 
 	return err

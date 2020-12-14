@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/api/util"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -32,7 +34,7 @@ func SetDB(c *gin.Context) {
 	defer db.Close()
 
 	// dbのデータを格納
-	c.Set("db", db)
+	util.SetDB(c, db)
 
 	c.Next()
 }

@@ -3,11 +3,10 @@ package rest
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-
 	"github.com/api/usecase"
 	"github.com/api/util"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserHandler interface {
@@ -30,8 +29,8 @@ func NewUserkHandler(tu usecase.UserUseCase) UserHandler {
 // ユーザー一覧を取得
 func (uh userHandler) GetUserAll(c *gin.Context) {
 
-	// DBデータを格納
-	DB := c.MustGet("db").(*gorm.DB)
+	// DBデータを取得
+	DB := util.DB(c)
 
 	// DBからデータを取得
 	users, err := uh.userUseCase.GetUserAll(DB)
@@ -59,13 +58,11 @@ func (uh userHandler) AddUser(c *gin.Context) {
 
 	var req TRequset
 
-	// DBデータを格納
-	DB := c.MustGet("db").(*gorm.DB)
+	// DBデータを取得
+	DB := util.DB(c)
 
 	// ユーザーデータを取得
-	err := util.GetRequest(c, &req)
-
-	if err != nil {
+	if err := util.GetRequest(c, &req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -79,9 +76,7 @@ func (uh userHandler) AddUser(c *gin.Context) {
 	}
 
 	// DBにデータを追加
-	errDB := uh.userUseCase.AddUser(DB, req.Name, req.Age, req.Icon, password, req.Email)
-
-	if errDB != nil {
+	if errDB := uh.userUseCase.AddUser(DB, req.Name, req.Age, req.Icon, password, req.Email); errDB != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
 		return
 	}

@@ -54,6 +54,7 @@ func StartRouter() *gin.Engine {
 			{
 				// example
 				v1.GET("/example", todoHandler.Index)
+				v1.PATCH("/refresh_token", jwtHandler.RefreshToken)
 			}
 		}
 	}
