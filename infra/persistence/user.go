@@ -45,7 +45,7 @@ func (user UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.Us
 }
 
 // IDでユーザー情報を取得
-func (user UserPersistence) GetCurrentUserID(DB *gorm.DB, ID int) (*model.User, error) {
+func (user UserPersistence) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error) {
 
 	currentUser := &model.User{}
 

@@ -43,15 +43,18 @@ func StartRouter() *gin.Engine {
 	{
 		v1 := api.Group("v1")
 		{
-			// example
-			v1.GET("/example", todoHandler.Index)
-
 			// user
 			v1.GET("/users", userHandler.GetUserAll)
 			v1.POST("/user", userHandler.AddUser)
 
 			// jwt
 			v1.POST("/login", jwtHandler.AuthMiddleware().LoginHandler)
+
+			v1.Use(jwtHandler.AuthMiddleware().MiddlewareFunc())
+			{
+				// example
+				v1.GET("/example", todoHandler.Index)
+			}
 		}
 	}
 

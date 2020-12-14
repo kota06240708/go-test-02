@@ -157,7 +157,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 			claims := jwt.ExtractClaims(c)
 
 			// ユーザーIDを取得
-			id := claims["userID"].(int)
+			id := claims["userID"].(float64)
 
 			// ユーザー情報を取得
 			user, errDB := jh.userUseCase.GetCurrentUserID(DB, id)

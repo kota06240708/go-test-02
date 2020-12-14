@@ -11,7 +11,7 @@ import (
 type UserUseCase interface {
 	GetUserAll(*gorm.DB) ([]*model.User, error)
 	GetCurrentUser(DB *gorm.DB, password string, email string) (*model.User, error)
-	GetCurrentUserID(DB *gorm.DB, ID int) (*model.User, error)
+	GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error)
 	AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error
 }
 
@@ -60,7 +60,7 @@ func (uu userUseCase) GetCurrentUser(DB *gorm.DB, password string, email string)
 }
 
 // IDでユーザー情報を取得
-func (uu userUseCase) GetCurrentUserID(DB *gorm.DB, ID int) (*model.User, error) {
+func (uu userUseCase) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error) {
 	// DBからデータを取得
 	user, err := uu.userRepository.GetCurrentUserID(DB, ID)
 
