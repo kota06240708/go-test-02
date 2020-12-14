@@ -1,8 +1,6 @@
 package persistence
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 
 	"github.com/api/domain/model"
@@ -57,8 +55,6 @@ func (user UserPersistence) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.Us
 
 // ユーザー情報登録
 func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error {
-
-	fmt.Println(password)
 
 	setUser := model.User{
 		Name:     name,
