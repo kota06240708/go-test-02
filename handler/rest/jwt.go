@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/api/domain/model"
@@ -53,7 +54,7 @@ var maxRefresh = time.Hour * 24 * 30 * 6
 func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 	var authMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
 		Realm:      "chats",
-		Key:        []byte("secret key"),
+		Key:        []byte(os.Getenv("JWT_SECRET_KEY")),
 		Timeout:    time.Hour * 24 * 30,
 		MaxRefresh: maxRefresh,
 

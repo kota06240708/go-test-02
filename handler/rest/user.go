@@ -11,6 +11,7 @@ import (
 
 type UserHandler interface {
 	GetUserAll(*gin.Context)
+	GetCurrentUser(*gin.Context)
 	AddUser(*gin.Context)
 }
 
@@ -43,6 +44,14 @@ func (uh userHandler) GetUserAll(c *gin.Context) {
 
 	//クライアントにレスポンスを返却
 	c.JSON(http.StatusOK, &users)
+}
+
+// 現在のユーザー情報を返す
+func (uh userHandler) GetCurrentUser(c *gin.Context) {
+	user := util.CurrentUser(c)
+
+	//クライアントにレスポンスを返却
+	c.JSON(http.StatusOK, user)
 }
 
 // ユーザーを追加
