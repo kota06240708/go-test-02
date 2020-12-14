@@ -9,7 +9,7 @@ type User struct {
 	Age      int     `json:"age"`
 	Icon     string  `json:"icon"`
 	Email    string  `json:"email"`
-	Password string  `json:"password" gorm:"-" sql:"-"`
+	Password string  `json:"password"`
 	Goods    []*Good `json:"goods" binding:"-"`
 	Posts    []*Post `json:"posts" binding:"-"`
 }

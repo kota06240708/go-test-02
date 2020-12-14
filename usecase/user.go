@@ -74,6 +74,7 @@ func (uu userUseCase) GetCurrentUserID(DB *gorm.DB, ID int) (*model.User, error)
 
 // userデータを追加するユースケース
 func (uu userUseCase) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error {
+
 	// DBにデータを追加
 	err := uu.userRepository.AddUser(DB, name, age, icon, password, email)
 

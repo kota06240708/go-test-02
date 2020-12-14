@@ -28,6 +28,13 @@ func StartRouter() *gin.Engine {
 	userUseCase := usecase.NewUserseCase(userPersistence)
 	userHandler := handler.NewUserkHandler(userUseCase)
 
+	// refreshToken
+	refreshTokenPersistence := persistence.NewRefreshTokenPersistence()
+	refreshTokenUseCase := usecase.NewRefreshTokenCase(refreshTokenPersistence)
+
+	// jwt
+	jwtHandler := handler.NewJwtHandler(userUseCase, refreshTokenUseCase)
+
 	// =====================================
 	// ルーティング
 	// =====================================
@@ -42,6 +49,9 @@ func StartRouter() *gin.Engine {
 			// user
 			v1.GET("/users", userHandler.GetUserAll)
 			v1.POST("/user", userHandler.AddUser)
+
+			// jwt
+			v1.POST("/login", jwtHandler.AuthMiddleware().LoginHandler)
 		}
 	}
 
