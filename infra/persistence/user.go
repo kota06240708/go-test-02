@@ -37,7 +37,18 @@ func (user UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.Us
 	var currentUser *model.User
 
 	// メールでユーザーを絞り込む
-	err := DB.Scopes(getUserQuery).Preload("Posts").Preload("Goods").Where("email = ?", email).First(&currentUser).Error
+	err := DB.Preload("Posts").Preload("Goods").Where("email = ?", email).First(&currentUser).Error
+
+	return currentUser, err
+}
+
+// IDでユーザー情報を取得
+func (user UserPersistence) GetCurrentUserID(DB *gorm.DB, ID int) (*model.User, error) {
+
+	var currentUser *model.User
+
+	// メールでユーザーを絞り込む
+	err := DB.Scopes(getUserQuery).Preload("Posts").Preload("Goods").Where("id = ?", ID).First(&currentUser).Error
 
 	return currentUser, err
 }

@@ -10,6 +10,7 @@ import (
 
 type RefreshTokenUseCase interface {
 	AddRefreshToken(DB *gorm.DB, token string, expire *time.Time) error
+	CheckRefreshToken(DB *gorm.DB, token string) error
 }
 
 type refreshTokenUseCase struct {
@@ -27,6 +28,14 @@ func NewRefreshTokenCase(rt repository.RefreshTokenRepository) RefreshTokenUseCa
 func (rt refreshTokenUseCase) AddRefreshToken(DB *gorm.DB, token string, expire *time.Time) error {
 	// DBにデータを追加
 	err := rt.refreshTokenRepository.AddRefreshToken(DB, token, expire)
+
+	return err
+}
+
+// refreshTokenをチェックするユースケース
+func (rt refreshTokenUseCase) CheckRefreshToken(DB *gorm.DB, token string) error {
+	// refreshTokenをチェック
+	err := rt.refreshTokenRepository.CheckRefreshToken(DB, token)
 
 	return err
 }

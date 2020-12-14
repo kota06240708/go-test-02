@@ -28,3 +28,14 @@ func (refreshToken RefreshTokenPersistence) AddRefreshToken(DB *gorm.DB, token s
 
 	return err
 }
+
+// リフレッシュトークンをチェック
+func (refreshToken RefreshTokenPersistence) CheckRefreshToken(DB *gorm.DB, token string) error {
+
+	var setRefreshToken model.RefreshToken
+
+	// リフレッシュトークンを作成
+	err := DB.Where("token = ? and expire > ?", token, time.Now()).First(&setRefreshToken).Error
+
+	return err
+}
