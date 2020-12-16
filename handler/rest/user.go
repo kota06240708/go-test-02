@@ -84,12 +84,21 @@ func (uh userHandler) AddUser(c *gin.Context) {
 		return
 	}
 
-	// DBにデータを追加
-	if errDB := uh.userUseCase.AddUser(DB, req.Name, req.Age, req.Icon, password, req.Email); errDB != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
-		return
-	}
+	// awsにアイコンをアップデート
+	url, errch := util.UploadToS3(req.Icon)
 
-	//クライアントにレスポンスを返却
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	select {
+	case err := <-errch:
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	case url := <-url:
+
+		// DBにデータを追加
+		if errDB := uh.userUseCase.AddUser(DB, req.Name, req.Age, url, password, req.Email); errDB != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
+			return
+		}
+
+		//クライアントにレスポンスを返却
+		c.JSON(http.StatusOK, gin.H{"status": "success"})
+	}
 }

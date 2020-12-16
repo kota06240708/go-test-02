@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `age` INT NOT NULL COMMENT '年齢',
   `icon` VARCHAR(255) COMMENT 'アイコンのurl',
   `password` VARCHAR(255) NOT NULL COMMENT 'パスワード',
-  `email` VARCHAR(255) NOT NULL COMMENT 'メールアドレス',
+  `email` VARCHAR(255) NOT NULL UNIQUE COMMENT 'メールアドレス',
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   `deleted_at` DATETIME,

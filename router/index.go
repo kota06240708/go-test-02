@@ -47,6 +47,9 @@ func StartRouter() *gin.Engine {
 			v1.GET("/users", userHandler.GetUserAll)
 			v1.POST("/signup", userHandler.AddUser)
 
+			// example
+			v1.GET("/example", todoHandler.Index)
+
 			// jwt
 			v1.POST("/login", jwtHandler.AuthMiddleware().LoginHandler)
 
@@ -54,9 +57,6 @@ func StartRouter() *gin.Engine {
 			{
 				// self
 				v1.GET("/self/user", userHandler.GetCurrentUser)
-
-				// example
-				v1.GET("/example", todoHandler.Index)
 
 				// refreshToken
 				v1.PATCH("/refresh_token", jwtHandler.RefreshToken)
