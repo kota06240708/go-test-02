@@ -69,3 +69,10 @@ func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon stri
 
 	return err
 }
+
+// ユーザー情報を更新
+func (user UserPersistence) UpdateUser(DB *gorm.DB, data *model.User) error {
+	err := DB.Save(&data).Error
+
+	return err
+}

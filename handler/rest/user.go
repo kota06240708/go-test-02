@@ -13,6 +13,7 @@ type UserHandler interface {
 	GetUserAll(*gin.Context)
 	GetCurrentUser(*gin.Context)
 	AddUser(*gin.Context)
+	UpdateUser(*gin.Context)
 }
 
 // usercaseのintefaceと紐ずける
@@ -71,7 +72,7 @@ func (uh userHandler) AddUser(c *gin.Context) {
 	DB := util.DB(c)
 
 	// ユーザーデータを取得
-	if err, errorMessages := util.GetRequest(c, &req); err != nil {
+	if err, errorMessages := util.GetRequestValidate(c, &req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "messages": errorMessages})
 		return
 	}
@@ -100,5 +101,66 @@ func (uh userHandler) AddUser(c *gin.Context) {
 
 		//クライアントにレスポンスを返却
 		c.JSON(http.StatusOK, gin.H{"status": "success"})
+	}
+}
+
+// ユーザー一覧を取得
+func (uh userHandler) UpdateUser(c *gin.Context) {
+	type TRequset struct {
+		Name     string `json:"name""`
+		Age      int    `json:"age""`
+		Icon     string `json:"icon""`
+		Password string `json:"password""`
+		Email    string `json:"email""`
+	}
+
+	var param TRequset
+
+	// DBデータを取得
+	DB := util.DB(c)
+	currentUser := util.CurrentUser(c)
+
+	// validate
+	if err, _ := util.GetRequestValidate(c, &param); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// reqとparamをマージ
+	if err := util.BindParam(c, &currentUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// アイコンがないそのまま再代入
+	if param.Icon == "" {
+		// DBのデータを更新
+		if errDB := uh.userUseCase.UpdateUser(DB, currentUser); errDB != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
+			return
+		}
+
+		//クライアントにレスポンスを返却
+		c.JSON(http.StatusOK, &currentUser)
+		return
+	}
+
+	// アイコンがある場合はawsにアイコンをアップデートしてからDBを更新
+	url, errIcon := util.UploadToS3(param.Icon)
+
+	select {
+	case err := <-errIcon:
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	case url := <-url:
+		currentUser.Icon = url
+
+		// DBのデータを更新
+		if errDB := uh.userUseCase.UpdateUser(DB, currentUser); errDB != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
+			return
+		}
+
+		//クライアントにレスポンスを返却
+		c.JSON(http.StatusOK, &currentUser)
 	}
 }

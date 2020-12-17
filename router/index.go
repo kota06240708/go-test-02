@@ -58,6 +58,7 @@ func StartRouter() *gin.Engine {
 				self := v1.Group("self")
 				{
 					self.GET("/user", userHandler.GetCurrentUser)
+					self.PATCH("/user", userHandler.UpdateUser)
 				}
 
 				// refreshToken

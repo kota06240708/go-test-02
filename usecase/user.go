@@ -13,6 +13,7 @@ type UserUseCase interface {
 	GetCurrentUser(DB *gorm.DB, password string, email string) (*model.User, error)
 	GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error)
 	AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error
+	UpdateUser(DB *gorm.DB, currentUser *model.User) error
 }
 
 type userUseCase struct {
@@ -77,6 +78,15 @@ func (uu userUseCase) AddUser(DB *gorm.DB, name string, age int, icon string, pa
 
 	// DBにデータを追加
 	err := uu.userRepository.AddUser(DB, name, age, icon, password, email)
+
+	return err
+}
+
+// userデータを更新する処理
+func (uu userUseCase) UpdateUser(DB *gorm.DB, currentUser *model.User) error {
+
+	// DBのデータを更新
+	err := uu.userRepository.UpdateUser(DB, currentUser)
 
 	return err
 }

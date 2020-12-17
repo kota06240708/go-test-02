@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -12,11 +13,21 @@ type TError struct {
 }
 
 // requestを取得
-func GetRequest(c *gin.Context, data interface{}) (error, []*TError) {
+func BindParam(c *gin.Context, data interface{}) error {
+	// reqのjsonデータを取得
+	if err := c.ShouldBindBodyWith(&data, binding.JSON); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// requestを取得
+func GetRequestValidate(c *gin.Context, data interface{}) (error, []*TError) {
 	validate := validator.New()
 
 	// reqのjsonデータを取得
-	if errBind := c.ShouldBindJSON(&data); errBind != nil {
+	if errBind := c.ShouldBindBodyWith(&data, binding.JSON); errBind != nil {
 		return errBind, nil
 	}
 
