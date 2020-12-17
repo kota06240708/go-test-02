@@ -71,7 +71,7 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 			var loginVal TLoginReq
 
 			// reqのデータを取得
-			if err := util.GetRequest(c, &loginVal); err != nil {
+			if err, _ := util.GetRequest(c, &loginVal); err != nil {
 				return nil, jwt.ErrMissingLoginValues
 			}
 
@@ -211,8 +211,8 @@ func (jh jwtHandler) RefreshToken(c *gin.Context) {
 	DB := util.DB(c)
 
 	// reqを取得
-	if err := util.GetRequest(c, &req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"400": err})
+	if err, errorMessages := util.GetRequest(c, &req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err, "messages": errorMessages})
 		return
 	}
 

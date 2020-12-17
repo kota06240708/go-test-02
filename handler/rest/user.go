@@ -71,8 +71,8 @@ func (uh userHandler) AddUser(c *gin.Context) {
 	DB := util.DB(c)
 
 	// ユーザーデータを取得
-	if err := util.GetRequest(c, &req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err, errorMessages := util.GetRequest(c, &req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "messages": errorMessages})
 		return
 	}
 

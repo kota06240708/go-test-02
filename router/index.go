@@ -55,8 +55,10 @@ func StartRouter() *gin.Engine {
 
 			v1.Use(jwtHandler.AuthMiddleware().MiddlewareFunc())
 			{
-				// self
-				v1.GET("/self/user", userHandler.GetCurrentUser)
+				self := v1.Group("self")
+				{
+					self.GET("/user", userHandler.GetCurrentUser)
+				}
 
 				// refreshToken
 				v1.PATCH("/refresh_token", jwtHandler.RefreshToken)
