@@ -76,3 +76,10 @@ func (user UserPersistence) UpdateUser(DB *gorm.DB, data *model.User) error {
 
 	return err
 }
+
+// ユーザー情報を削除
+func (user UserPersistence) DeleteUser(DB *gorm.DB, id int) error {
+	err := DB.Where("id = ?", id).Delete(&model.User{}).Error
+
+	return err
+}

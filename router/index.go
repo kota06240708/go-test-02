@@ -28,6 +28,11 @@ func StartRouter() *gin.Engine {
 	userUseCase := usecase.NewUserseCase(userPersistence)
 	userHandler := handler.NewUserkHandler(userUseCase)
 
+	// post
+	postPersistence := persistence.NewPostPersistence()
+	potsUseCase := usecase.NewPostCase(postPersistence)
+	postHandler := handler.NewPostHandler(potsUseCase)
+
 	// refreshToken
 	refreshTokenPersistence := persistence.NewRefreshTokenPersistence()
 	refreshTokenUseCase := usecase.NewRefreshTokenCase(refreshTokenPersistence)
@@ -57,12 +62,23 @@ func StartRouter() *gin.Engine {
 			{
 				self := v1.Group("self")
 				{
+					// user
 					self.GET("/user", userHandler.GetCurrentUser)
 					self.PATCH("/user", userHandler.UpdateUser)
+
+					// post
+					self.POST("/post", postHandler.AddPost)
+					self.GET("/posts", postHandler.GetCurrentPosts)
 				}
+
+				// user
+				v1.DELETE("/user", userHandler.DeleteUser)
 
 				// refreshToken
 				v1.PATCH("/refresh_token", jwtHandler.RefreshToken)
+
+				// posts
+				v1.GET("/posts", postHandler.GetPostAll)
 			}
 		}
 	}

@@ -5,8 +5,8 @@ package model
 type Post struct {
 	Model
 
-	UserId int     `json:"userId" binding:"-"`
-	Text   int     `json:"text" binding:"-"`
+	UserId uint    `json:"userId" binding:"-"`
+	Text   string  `json:"text" binding:"-"`
 	User   User    `json:"user" binding:"-"`
 	Goods  []*Good `json:"goods" binding:"-"`
 }

@@ -12,4 +12,5 @@ type UserRepository interface {
 	GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error)
 	UpdateUser(DB *gorm.DB, data *model.User) error
 	AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error
+	DeleteUser(DB *gorm.DB, id int) error
 }

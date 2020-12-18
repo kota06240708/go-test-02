@@ -14,6 +14,7 @@ type UserHandler interface {
 	GetCurrentUser(*gin.Context)
 	AddUser(*gin.Context)
 	UpdateUser(*gin.Context)
+	DeleteUser(*gin.Context)
 }
 
 // usercaseのintefaceと紐ずける
@@ -45,6 +46,38 @@ func (uh userHandler) GetUserAll(c *gin.Context) {
 
 	//クライアントにレスポンスを返却
 	c.JSON(http.StatusOK, &users)
+}
+
+// idのユーザーを削除
+func (uh userHandler) DeleteUser(c *gin.Context) {
+	//request：TodoAPIのパラメータ
+	type TRequset struct {
+		UserId int `json:"user_id" validate:"required"`
+	}
+
+	// Reqを受け取る
+	var param TRequset
+
+	// DBデータを取得
+	DB := util.DB(c)
+
+	// validate
+	if err, messages := util.GetRequestValidate(c, &param); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "messages": messages})
+		return
+	}
+
+	// DBにあるデータを削除
+	err := uh.userUseCase.DeleteUser(DB, param.UserId)
+
+	// エラーかどうかチェック
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	//クライアントにレスポンスを返却
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 // 現在のユーザー情報を返す
@@ -107,11 +140,11 @@ func (uh userHandler) AddUser(c *gin.Context) {
 // ユーザー一覧を取得
 func (uh userHandler) UpdateUser(c *gin.Context) {
 	type TRequset struct {
-		Name     string `json:"name""`
-		Age      int    `json:"age""`
-		Icon     string `json:"icon""`
-		Password string `json:"password""`
-		Email    string `json:"email""`
+		Name     string `json:"name"`
+		Age      int    `json:"age"`
+		Icon     string `json:"icon"`
+		Password string `json:"password"`
+		Email    string `json:"email"`
 	}
 
 	var param TRequset
