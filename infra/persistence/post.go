@@ -32,12 +32,37 @@ func (post PostPersistence) AddPost(DB *gorm.DB, p *model.Post) (*model.Post, er
 	return p, err
 }
 
-// 投稿を絞り込む
-func (post PostPersistence) GetSelectPost(DB *gorm.DB, id uint) ([]*model.Post, error) {
+// 指定した投稿IDを取得
+func (post PostPersistence) GetSelectPost(DB *gorm.DB, postId uint) (*model.Post, error) {
+	p := &model.Post{}
+
+	// idで絞り込む
+	err := DB.Where("id = ?", postId).Preload("Goods").First(&p).Error
+
+	return p, err
+}
+
+func (post PostPersistence) GetUserPosts(DB *gorm.DB, userId uint) ([]*model.Post, error) {
 	var p []*model.Post
 
 	// idで絞り込む
-	err := DB.Where("user_id = ?", id).Preload("Goods").Preload("User").Find(&p).Error
+	err := DB.Where("user_id = ?", userId).Preload("Goods").Find(&p).Error
 
 	return p, err
+}
+
+// 投稿をアップデート
+func (post PostPersistence) UpdatePost(DB *gorm.DB, p *model.Post) error {
+	// idで絞り込む
+	err := DB.Save(&p).Error
+
+	return err
+}
+
+// 指定した投稿を削除
+func (post PostPersistence) DeletePost(DB *gorm.DB, id uint) error {
+	// 指定したコメントを削除
+	err := DB.Where("id = ?", id).Delete(&model.Post{}).Error
+
+	return err
 }

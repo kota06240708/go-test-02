@@ -60,16 +60,6 @@ func StartRouter() *gin.Engine {
 
 			v1.Use(jwtHandler.AuthMiddleware().MiddlewareFunc())
 			{
-				self := v1.Group("self")
-				{
-					// user
-					self.GET("/user", userHandler.GetCurrentUser)
-					self.PATCH("/user", userHandler.UpdateUser)
-
-					// post
-					self.POST("/post", postHandler.AddPost)
-					self.GET("/posts", postHandler.GetCurrentPosts)
-				}
 
 				// user
 				v1.DELETE("/user", userHandler.DeleteUser)
@@ -79,6 +69,19 @@ func StartRouter() *gin.Engine {
 
 				// posts
 				v1.GET("/posts", postHandler.GetPostAll)
+
+				self := v1.Group("self")
+				{
+					// user
+					self.GET("/user", userHandler.GetCurrentUser)
+					self.PATCH("/user", userHandler.UpdateUser)
+
+					// post
+					self.POST("/post", postHandler.AddPost)
+					self.GET("/posts", postHandler.GetCurrentPosts)
+					self.PATCH("/post/:id", postHandler.UpdatePost)
+					self.DELETE("/post/:id", postHandler.DeletePost)
+				}
 			}
 		}
 	}

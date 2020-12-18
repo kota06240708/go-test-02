@@ -1,7 +1,9 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/api/domain/model"
 
@@ -15,7 +17,9 @@ type PostHandler interface {
 	GetPostAll(*gin.Context)
 	GetCurrentPosts(*gin.Context)
 	AddPost(*gin.Context)
-	GetSelectPosts(*gin.Context)
+	UpdatePost(*gin.Context)
+	DeletePost(*gin.Context)
+	GetUserPosts(*gin.Context)
 }
 
 // postcaseのintefaceと紐ずける
@@ -57,7 +61,7 @@ func (ph postHandler) GetCurrentPosts(c *gin.Context) {
 	DB := util.DB(c)
 
 	// DBからデータを取得
-	post, err := ph.postUseCase.GetSelectPost(DB, user.ID)
+	post, err := ph.postUseCase.GetUserPosts(DB, user.ID)
 
 	// エラーかどうかチェック
 	if err != nil {
@@ -113,8 +117,89 @@ func (ph postHandler) AddPost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
+// 指定した投稿を更新
+func (ph postHandler) UpdatePost(c *gin.Context) {
+	type TReq struct {
+		Text string `json:"text" validate:"required"`
+	}
+
+	var req TReq
+
+	postId, errUint := strconv.ParseUint(c.Param("id"), 10, 32)
+
+	// パースがうまくいったか確認
+	if errUint != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errUint.Error()})
+		return
+	}
+
+	// DBデータを取得
+	DB := util.DB(c)
+
+	// reqのデータvalidate
+	if err, errorMessages := util.GetRequestValidate(c, &req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "messages": errorMessages})
+		return
+	}
+
+	fmt.Println(uint(postId))
+
+	// DBから指定したデータを取得
+	post, errDB := ph.postUseCase.GetSelectPost(DB, uint(postId))
+
+	// エラーかどうかチェック
+	if errDB != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
+		return
+	}
+
+	// reqのデータをbind
+	if err := util.BindParam(c, &post); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// DBから指定したデータを取得
+	errPost := ph.postUseCase.UpdatePost(DB, post)
+
+	// エラーかどうかチェック
+	if errPost != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errPost.Error()})
+		return
+	}
+
+	//クライアントにレスポンスを返却
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+// 指定した投稿を削除
+func (ph postHandler) DeletePost(c *gin.Context) {
+	postId, errUint := strconv.ParseUint(c.Param("id"), 10, 32)
+
+	// パースがうまくいったか確認
+	if errUint != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errUint.Error()})
+		return
+	}
+
+	// DBデータを取得
+	DB := util.DB(c)
+
+	// DBから指定したデータを削除
+	err := ph.postUseCase.DeletePost(DB, uint(postId))
+
+	// エラーかどうかチェック
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	//クライアントにレスポンスを返却
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
 // 指定したコメントを取得
-func (ph postHandler) GetSelectPosts(c *gin.Context) {
+func (ph postHandler) GetUserPosts(c *gin.Context) {
 	type TReq struct {
 		UserId uint `json:"name" validate:"required"`
 	}
@@ -131,7 +216,7 @@ func (ph postHandler) GetSelectPosts(c *gin.Context) {
 	DB := util.DB(c)
 
 	// DBからデータを取得
-	posts, err := ph.postUseCase.GetSelectPost(DB, req.UserId)
+	posts, err := ph.postUseCase.GetUserPosts(DB, req.UserId)
 
 	// エラーかどうかチェック
 	if err != nil {

@@ -7,7 +7,7 @@ type Post struct {
 
 	UserId uint    `json:"userId" binding:"-"`
 	Text   string  `json:"text" binding:"-"`
-	User   User    `json:"user" binding:"-"`
+	User   *User   `json:"user" binding:"-"`
 	Goods  []*Good `json:"goods" binding:"-"`
 }
 
