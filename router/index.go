@@ -33,6 +33,11 @@ func StartRouter() *gin.Engine {
 	potsUseCase := usecase.NewPostCase(postPersistence)
 	postHandler := handler.NewPostHandler(potsUseCase)
 
+	// good
+	goodPersistence := persistence.NewGoodPersistence()
+	goodUseCase := usecase.NewGoodCase(goodPersistence)
+	goodHandler := handler.NewGoodHandler(goodUseCase)
+
 	// refreshToken
 	refreshTokenPersistence := persistence.NewRefreshTokenPersistence()
 	refreshTokenUseCase := usecase.NewRefreshTokenCase(refreshTokenPersistence)
@@ -69,6 +74,9 @@ func StartRouter() *gin.Engine {
 
 				// posts
 				v1.GET("/posts", postHandler.GetPostAll)
+
+				// good
+				v1.POST("/good/:id", goodHandler.SetGood)
 
 				self := v1.Group("self")
 				{
