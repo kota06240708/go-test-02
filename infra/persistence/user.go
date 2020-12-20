@@ -13,26 +13,20 @@ func NewUserPersistence() repository.UserRepository {
 	return &UserPersistence{}
 }
 
-// ユーザーを取得する時のクエリー
-func getUserQuery(DB *gorm.DB) *gorm.DB {
-	query := `id, name, age, icon, email, created_at, updated_at`
-
-	return DB.Select(query)
-}
-
 // ユーザー情報全て取得
-func (user UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
+func (up UserPersistence) GetAll(DB *gorm.DB) ([]*model.User, error) {
 
 	var users []*model.User
+	user := &model.User{}
 
 	// ユーザー全て取得
-	err := DB.Scopes(getUserQuery).Preload("Posts").Preload("Goods").Find(&users).Error
+	err := DB.Scopes(user.GetResParam).Preload("Posts").Preload("Goods").Find(&users).Error
 
 	return users, err
 }
 
 // ログインユーザーを取得
-func (user UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.User, error) {
+func (up UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.User, error) {
 
 	currentUser := &model.User{}
 
@@ -43,20 +37,20 @@ func (user UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.Us
 }
 
 // IDでユーザー情報を取得
-func (user UserPersistence) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error) {
+func (up UserPersistence) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error) {
 
-	currentUser := &model.User{}
+	user := &model.User{}
 
 	// メールでユーザーを絞り込む
-	err := DB.Scopes(getUserQuery).Preload("Posts").Preload("Goods").Where("id = ?", ID).First(&currentUser).Error
+	err := DB.Scopes(user.GetResParam).Preload("Posts").Preload("Goods").Where("id = ?", ID).First(&user).Error
 
-	return currentUser, err
+	return user, err
 }
 
 // ユーザー情報登録
-func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error {
+func (up UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon string, password string, email string) error {
 
-	setUser := model.User{
+	user := model.User{
 		Name:     name,
 		Age:      age,
 		Icon:     icon,
@@ -65,20 +59,20 @@ func (user UserPersistence) AddUser(DB *gorm.DB, name string, age int, icon stri
 	}
 
 	// ユーザー情報を登録
-	err := DB.Create(&setUser).Error
+	err := DB.Create(&user).Error
 
 	return err
 }
 
 // ユーザー情報を更新
-func (user UserPersistence) UpdateUser(DB *gorm.DB, data *model.User) error {
+func (up UserPersistence) UpdateUser(DB *gorm.DB, data *model.User) error {
 	err := DB.Save(&data).Error
 
 	return err
 }
 
 // ユーザー情報を削除
-func (user UserPersistence) DeleteUser(DB *gorm.DB, id int) error {
+func (up UserPersistence) DeleteUser(DB *gorm.DB, id int) error {
 	err := DB.Where("id = ?", id).Delete(&model.User{}).Error
 
 	return err

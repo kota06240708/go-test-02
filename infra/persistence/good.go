@@ -14,7 +14,7 @@ func NewGoodPersistence() repository.GoodRepository {
 }
 
 // いいねを追加
-func (g GoodPersistence) AddGood(DB *gorm.DB, userId uint, postId int, isGood bool) error {
+func (g GoodPersistence) AddGood(DB *gorm.DB, userId uint, postId int, isGood *bool) error {
 
 	good := &model.Good{
 		UserId: userId,
@@ -40,9 +40,8 @@ func (g GoodPersistence) CheckGood(DB *gorm.DB, userId uint, postId int) bool {
 }
 
 // いいねを更新
-func (g GoodPersistence) UpdateGood(DB *gorm.DB, userId uint, postId int, isGood bool) error {
-
-	err := DB.Model(&model.Good{}).Where("user_id = ? AND post_id >= ?", userId, postId).Update("isGood", isGood).Error
+func (g GoodPersistence) UpdateGood(DB *gorm.DB, userId uint, postId int, isGood *bool) error {
+	err := DB.Model(&model.Good{}).Where("user_id = ? AND post_id >= ?", userId, postId).Update("is_good", isGood).Error
 
 	return err
 }

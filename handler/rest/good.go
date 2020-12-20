@@ -26,7 +26,7 @@ func NewGoodHandler(gu usecase.GoodUseCase) GoodHandler {
 
 func (gh goodHandler) SetGood(c *gin.Context) {
 	type TReq struct {
-		IsGood bool `json:"isGood" validate:"required"`
+		IsGood *bool `json:"isGood" validate:"required"`
 	}
 
 	var req TReq

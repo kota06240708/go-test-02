@@ -7,7 +7,7 @@ import (
 )
 
 type GoodUseCase interface {
-	UpdateGood(DB *gorm.DB, userId uint, postId int, isGood bool) error
+	UpdateGood(DB *gorm.DB, userId uint, postId int, isGood *bool) error
 }
 
 type goodUseCase struct {
@@ -22,7 +22,7 @@ func NewGoodCase(gr repository.GoodRepository) GoodUseCase {
 }
 
 // 投稿情報を全て取得
-func (gu goodUseCase) UpdateGood(DB *gorm.DB, userId uint, postId int, isGood bool) error {
+func (gu goodUseCase) UpdateGood(DB *gorm.DB, userId uint, postId int, isGood *bool) error {
 
 	// 既にDBに存在するかチェック
 	getIsGood := gu.goodRepository.CheckGood(DB, userId, postId)

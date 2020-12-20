@@ -16,26 +16,26 @@ func NewRefreshTokenPersistence() repository.RefreshTokenRepository {
 }
 
 // リフレッシュトークンを追加
-func (refreshToken RefreshTokenPersistence) AddRefreshToken(DB *gorm.DB, token string, expire *time.Time) error {
+func (rp RefreshTokenPersistence) AddRefreshToken(DB *gorm.DB, token string, expire *time.Time) error {
 
-	setRefreshToken := model.RefreshToken{
+	refreshToken := &model.RefreshToken{
 		Token:  token,
 		Expire: expire,
 	}
 
 	// リフレッシュトークンを作成
-	err := DB.Create(&setRefreshToken).Error
+	err := DB.Create(&refreshToken).Error
 
 	return err
 }
 
 // リフレッシュトークンをチェック
-func (refreshToken RefreshTokenPersistence) CheckRefreshToken(DB *gorm.DB, token string) error {
+func (rp RefreshTokenPersistence) CheckRefreshToken(DB *gorm.DB, token string) error {
 
-	var setRefreshToken model.RefreshToken
+	refreshToken := &model.RefreshToken{}
 
 	// リフレッシュトークンをチェック
-	err := DB.Where("token = ? and expire > ?", token, time.Now()).First(&setRefreshToken).Error
+	err := DB.Where("token = ? and expire > ?", token, time.Now()).First(&refreshToken).Error
 
 	return err
 }
