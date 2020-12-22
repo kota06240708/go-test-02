@@ -53,6 +53,8 @@ func StartRouter() *gin.Engine {
 	{
 		v1 := api.Group("v1")
 		{
+			v1.GET("/ping", handler.ApiPing)
+
 			// user
 			v1.GET("/users", userHandler.GetUserAll)
 			v1.POST("/signup", userHandler.AddUser)

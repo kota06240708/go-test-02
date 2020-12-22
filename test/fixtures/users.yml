@@ -1,0 +1,17 @@
+- id: 1
+  name: test01
+  age: 24
+  icon: https://go-test-02-image.s3.ap-northeast-1.amazonaws.com/1608179633.jpeg
+  password: $2a$10$nMj/ZzMG4eNyPCoIMUnLxOwM/ZULeZhwg7BG/1lRaOe/WBmHNT3XS
+  email: example01@gmail.com
+  created_at: RAW=NOW()
+  updated_at: RAW=NOW()
+
+- id: 2
+  name: test02
+  age: 228
+  icon: https://go-test-02-image.s3.ap-northeast-1.amazonaws.com/1608179633.jpeg
+  password: $2a$10$nMj/ZzMG4eNyPCoIMUnLxOwM/ZULeZhwg7BG/1lRaOe/WBmHNT3XS
+  email: example02@gmail.com
+  created_at: RAW=NOW()
+  updated_at: RAW=NOW()

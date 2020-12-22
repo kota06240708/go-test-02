@@ -46,12 +46,24 @@ func (pp PostPersistence) GetSelectPost(DB *gorm.DB, postId uint) (*model.Post, 
 }
 
 func (pp PostPersistence) GetUserPosts(DB *gorm.DB, userId uint) ([]*model.Post, error) {
-	var p []*model.Post
+	var posts []*model.Post
+	post := &model.Post{}
 
-	// idで絞り込む
-	err := DB.Where("user_id = ?", userId).Preload("Goods").Find(&p).Error
+	err := DB.Table(post.TableName()).
+		Where("posts.user_id = ?", userId).
+		Joins("left join goods on posts.id = goods.post_id").
+		Group("posts.id").
+		Select("count(goods.id) as good_count, posts.id, posts.created_at, posts.updated_at, posts.user_id, posts.text").
+		Preload("Goods").
+		Find(&posts).
+		Error
 
-	return p, err
+	// for _, post := range posts {
+	// 	count := len(post.Goods)
+	// 	post.GoodCount = &count
+	// }
+
+	return posts, err
 }
 
 // 投稿をアップデート

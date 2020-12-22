@@ -15,11 +15,22 @@ func SetDB(c *gin.Context) {
 	DBHost := os.Getenv("MYSQL_HOST")
 	DBPort := os.Getenv("MYSQL_PORT")
 	DBName := os.Getenv("MYSQL_DATABASE")
+	DBNameTest := os.Getenv("MYSQL_DATABASE_TEST")
 	DBUser := os.Getenv("MYSQL_USER")
+	DBUserTest := os.Getenv("MYSQL_ROOT_USER")
 	DBPass := os.Getenv("MYSQL_PASSWORD")
+	DBPassTest := os.Getenv("MYSQL_ROOT_PASSWORD")
+
+	MODE := os.Getenv("MODE")
 
 	// dbとの接続データを格納
-	dbConnection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", DBUser, DBPass, DBHost, DBPort, DBName)
+	var dbConnection string
+
+	if MODE == "test" {
+		dbConnection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", DBUserTest, DBPassTest, DBHost, DBPort, DBNameTest)
+	} else {
+		dbConnection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", DBUser, DBPass, DBHost, DBPort, DBName)
+	}
 
 	// dbと接続
 	db, err := gorm.Open("mysql", dbConnection)
