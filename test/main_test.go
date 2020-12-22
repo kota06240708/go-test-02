@@ -55,7 +55,6 @@ type TApiData struct {
 	Type  string
 	Url   string
 	Param string
-	Body  interface{}
 }
 
 // APIを叩く
