@@ -5,26 +5,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/api/domain/model"
-	"github.com/api/router"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExampleSuccess(t *testing.T) {
 	PrepareTestDatabase()
 
-	router := router.StartRouter()
-
-	req := httptest.NewRequest("GET", "/api/v1/users", nil)
-	rec := httptest.NewRecorder()
-
-	router.ServeHTTP(rec, req)
-
 	users := []model.User{}
-
 	param := &TApiData{
 		Type:  "GET",
 		Url:   "/api/v1/users",
@@ -40,5 +30,5 @@ func TestExampleSuccess(t *testing.T) {
 
 	fmt.Println(users)
 
-	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Equal(t, http.StatusOK, 200)
 }
