@@ -46,7 +46,7 @@ func (pp PostPersistence) GetSelectPost(DB *gorm.DB, postId uint) (*model.PostRe
 
 	// idで絞り込む
 	err := DB.
-		Where("id = ?", postId).
+		Where("posts.id = ?", postId).
 		Scopes(post.GetGoodCount).
 		Preload("Goods").
 		First(&p).Error
@@ -73,6 +73,8 @@ func (pp PostPersistence) UpdatePost(DB *gorm.DB, p *model.Post, id uint) error 
 	var post model.Post
 
 	DB.Where("id = ?", id).First(&post)
+
+	post.Text = p.Text
 
 	// 投稿を更新
 	err := DB.Save(&post).Error

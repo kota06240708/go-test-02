@@ -16,6 +16,8 @@ var postPersistence repository.PostRepository
 var goodPersistence repository.GoodRepository
 
 func TestMain(m *testing.M) {
+	test.InitDB("../../test/")
+
 	// DBを定義
 	db, _ = test.GetDB()
 
