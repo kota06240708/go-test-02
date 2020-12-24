@@ -6,7 +6,5 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	InitDB("./")
-
 	os.Exit(m.Run())
 }

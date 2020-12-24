@@ -8,8 +8,14 @@ type Post struct {
 	UserId    uint    `json:"userId" binding:"-"`
 	Text      string  `json:"text" binding:"-"`
 	User      *User   `json:"user" binding:"-"`
-	GoodCount *int    `json:"goodCount" binding:"-"`
+	GoodCount []*User `json:"goodCount" binding:"-"`
 	Goods     []*Good `json:"goods" binding:"-"`
+}
+
+type PostReq struct {
+	Post
+
+	GoodCount *int `json:"goodCount" binding:"-"`
 }
 
 func (p *Post) TableName() string {
