@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -127,6 +126,8 @@ func (ph postHandler) UpdatePost(c *gin.Context) {
 
 	postId, errUint := strconv.ParseUint(c.Param("id"), 10, 32)
 
+	var post model.Post
+
 	// パースがうまくいったか確認
 	if errUint != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errUint.Error()})
@@ -142,17 +143,6 @@ func (ph postHandler) UpdatePost(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(uint(postId))
-
-	// DBから指定したデータを取得
-	post, errDB := ph.postUseCase.GetSelectPost(DB, uint(postId))
-
-	// エラーかどうかチェック
-	if errDB != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errDB.Error()})
-		return
-	}
-
 	// reqのデータをbind
 	if err := util.BindParam(c, &post); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -160,7 +150,7 @@ func (ph postHandler) UpdatePost(c *gin.Context) {
 	}
 
 	// DBから指定したデータを取得
-	errPost := ph.postUseCase.UpdatePost(DB, post)
+	errPost := ph.postUseCase.UpdatePost(DB, &post, uint(postId))
 
 	// エラーかどうかチェック
 	if errPost != nil {

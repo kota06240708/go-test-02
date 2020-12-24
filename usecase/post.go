@@ -8,12 +8,12 @@ import (
 )
 
 type PostUseCase interface {
-	GetPosts(DB *gorm.DB) ([]*model.Post, error)
+	GetPosts(DB *gorm.DB) ([]*model.PostRes, error)
 	AddPost(DB *gorm.DB, post *model.Post) (*model.Post, error)
-	UpdatePost(DB *gorm.DB, post *model.Post) error
+	UpdatePost(DB *gorm.DB, post *model.Post, id uint) error
 	DeletePost(DB *gorm.DB, id uint) error
-	GetSelectPost(DB *gorm.DB, postId uint) (*model.Post, error)
-	GetUserPosts(DB *gorm.DB, userId uint) ([]*model.Post, error)
+	GetSelectPost(DB *gorm.DB, postId uint) (*model.PostRes, error)
+	GetUserPosts(DB *gorm.DB, userId uint) ([]*model.PostRes, error)
 }
 
 type postUseCase struct {
@@ -28,7 +28,7 @@ func NewPostCase(pr repository.PostRepository) PostUseCase {
 }
 
 // 投稿情報を全て取得
-func (pu postUseCase) GetPosts(DB *gorm.DB) ([]*model.Post, error) {
+func (pu postUseCase) GetPosts(DB *gorm.DB) ([]*model.PostRes, error) {
 
 	// DBからデータを取得
 	posts, err := pu.postRepository.GetPosts(DB)
@@ -37,10 +37,10 @@ func (pu postUseCase) GetPosts(DB *gorm.DB) ([]*model.Post, error) {
 }
 
 // 投稿をアップデート
-func (pu postUseCase) UpdatePost(DB *gorm.DB, p *model.Post) error {
+func (pu postUseCase) UpdatePost(DB *gorm.DB, p *model.Post, id uint) error {
 
 	// DBのデータを更新
-	err := pu.postRepository.UpdatePost(DB, p)
+	err := pu.postRepository.UpdatePost(DB, p, id)
 
 	return err
 }
@@ -64,7 +64,7 @@ func (pu postUseCase) AddPost(DB *gorm.DB, post *model.Post) (*model.Post, error
 }
 
 // 指定したIDの投稿を取得
-func (pu postUseCase) GetSelectPost(DB *gorm.DB, id uint) (*model.Post, error) {
+func (pu postUseCase) GetSelectPost(DB *gorm.DB, id uint) (*model.PostRes, error) {
 
 	// DBからデータを取得
 	post, err := pu.postRepository.GetSelectPost(DB, id)
@@ -73,7 +73,7 @@ func (pu postUseCase) GetSelectPost(DB *gorm.DB, id uint) (*model.Post, error) {
 }
 
 // 指定したユーザーの投稿を全て取得
-func (pu postUseCase) GetUserPosts(DB *gorm.DB, id uint) ([]*model.Post, error) {
+func (pu postUseCase) GetUserPosts(DB *gorm.DB, id uint) ([]*model.PostRes, error) {
 
 	// DBからデータを取得
 	posts, err := pu.postRepository.GetUserPosts(DB, id)

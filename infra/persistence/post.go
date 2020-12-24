@@ -13,15 +13,19 @@ func NewPostPersistence() repository.PostRepository {
 }
 
 // 投稿情報を全て取得
-func (pp PostPersistence) GetPosts(DB *gorm.DB) ([]*model.Post, error) {
+func (pp PostPersistence) GetPosts(DB *gorm.DB) ([]*model.PostRes, error) {
 
-	var posts []*model.Post
+	var posts []*model.PostRes
+	post := &model.Post{}
 	user := &model.User{}
 
 	// ユーザー全て取得
-	err := DB.Preload("Goods").Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Scopes(user.GetResParam)
-	}).Find(&posts).Error
+	err := DB.Preload("Goods").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Scopes(user.GetResParam)
+		}).
+		Scopes(post.GetGoodCount).
+		Find(&posts).Error
 
 	return posts, err
 }
@@ -36,40 +40,42 @@ func (pp PostPersistence) AddPost(DB *gorm.DB, p *model.Post) (*model.Post, erro
 }
 
 // 指定した投稿IDを取得
-func (pp PostPersistence) GetSelectPost(DB *gorm.DB, postId uint) (*model.Post, error) {
-	p := &model.Post{}
+func (pp PostPersistence) GetSelectPost(DB *gorm.DB, postId uint) (*model.PostRes, error) {
+	p := &model.PostRes{}
+	post := &model.Post{}
 
 	// idで絞り込む
-	err := DB.Where("id = ?", postId).Preload("Goods").First(&p).Error
+	err := DB.
+		Where("id = ?", postId).
+		Scopes(post.GetGoodCount).
+		Preload("Goods").
+		First(&p).Error
 
 	return p, err
 }
 
-func (pp PostPersistence) GetUserPosts(DB *gorm.DB, userId uint) ([]*model.Post, error) {
-	var posts []*model.Post
+func (pp PostPersistence) GetUserPosts(DB *gorm.DB, userId uint) ([]*model.PostRes, error) {
+	var posts []*model.PostRes
 	post := &model.Post{}
 
 	err := DB.Table(post.TableName()).
 		Where("posts.user_id = ?", userId).
-		Joins("left join goods on posts.id = goods.post_id").
-		Group("posts.id").
-		Select("count(goods.id) as good_count, posts.id, posts.created_at, posts.updated_at, posts.user_id, posts.text").
+		Scopes(post.GetGoodCount).
 		Preload("Goods").
 		Find(&posts).
 		Error
-
-	// for _, post := range posts {
-	// 	count := len(post.Goods)
-	// 	post.GoodCount = &count
-	// }
 
 	return posts, err
 }
 
 // 投稿をアップデート
-func (pp PostPersistence) UpdatePost(DB *gorm.DB, p *model.Post) error {
+func (pp PostPersistence) UpdatePost(DB *gorm.DB, p *model.Post, id uint) error {
+	var post model.Post
+
+	DB.Where("id = ?", id).First(&post)
+
 	// 投稿を更新
-	err := DB.Save(&p).Error
+	err := DB.Save(&post).Error
 
 	return err
 }

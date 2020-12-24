@@ -44,7 +44,7 @@ func (up UserPersistence) GetCurrentUser(DB *gorm.DB, email string) (*model.User
 func (up UserPersistence) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User, error) {
 
 	user := &model.User{}
-	var posts []*model.Post
+	var posts []*model.PostRes
 	post := model.Post{}
 
 	// メールでユーザーを絞り込む
@@ -55,9 +55,7 @@ func (up UserPersistence) GetCurrentUserID(DB *gorm.DB, ID float64) (*model.User
 	err := DB.
 		Table(post.TableName()).
 		Where("posts.user_id = ?", ID).
-		Joins("left join goods on goods.post_id = posts.id").
-		Group("posts.id").
-		Select("count(goods.id) as good_count, posts.id, posts.created_at, posts.updated_at, posts.user_id, posts.text").
+		Scopes(post.GetGoodCount).
 		Find(&posts).
 		Error
 
