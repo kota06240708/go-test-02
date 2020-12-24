@@ -2,7 +2,6 @@ package test
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"testing"
@@ -12,8 +11,6 @@ import (
 )
 
 func TestExampleSuccess(t *testing.T) {
-	PrepareTestDatabase()
-
 	users := []model.User{}
 	param := &TApiData{
 		Type:  "GET",
@@ -27,8 +24,6 @@ func TestExampleSuccess(t *testing.T) {
 	if err := json.Unmarshal(body, &users); err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(users)
 
 	assert.Equal(t, http.StatusOK, 200)
 }

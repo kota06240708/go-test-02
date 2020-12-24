@@ -1,0 +1,20 @@
+# - id: 1
+#   user_id: 1
+#   post_id: 1
+#   is_good: 0
+#   created_at: RAW=NOW()
+#   updated_at: RAW=NOW()
+
+# - id: 2
+#   user_id: 1
+#   post_id: 2
+#   is_good: 0
+#   created_at: RAW=NOW()
+#   updated_at: RAW=NOW()
+
+# - id: 3
+#   user_id: 2
+#   post_id: 2
+#   is_good: 0
+#   created_at: RAW=NOW()
+#   updated_at: RAW=NOW()

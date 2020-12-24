@@ -21,5 +21,6 @@ require (
 	github.com/theckman/go-securerandom v0.1.1
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	gopkg.in/go-playground/assert.v1 v1.2.1
 	gopkg.in/go-playground/validator.v9 v9.31.0
 )
