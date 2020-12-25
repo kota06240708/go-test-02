@@ -70,14 +70,8 @@ func (pp PostPersistence) GetUserPosts(DB *gorm.DB, userId uint) ([]*model.PostR
 
 // 投稿をアップデート
 func (pp PostPersistence) UpdatePost(DB *gorm.DB, p *model.Post, id uint) error {
-	var post model.Post
-
-	DB.Where("id = ?", id).First(&post)
-
-	post.Text = p.Text
-
 	// 投稿を更新
-	err := DB.Save(&post).Error
+	err := DB.Model(&model.Post{}).Where("id = ?", id).Update("text", p.Text).Error
 
 	return err
 }
