@@ -15,6 +15,7 @@ var db *gorm.DB
 var postPersistence repository.PostRepository
 var goodPersistence repository.GoodRepository
 var userPersistence repository.UserRepository
+var refreshTokenPersistence repository.RefreshTokenRepository
 
 func TestMain(m *testing.M) {
 	test.InitDB("../../test/")
@@ -26,6 +27,7 @@ func TestMain(m *testing.M) {
 	goodPersistence = persistence.NewGoodPersistence()
 	postPersistence = persistence.NewPostPersistence()
 	userPersistence = persistence.NewUserPersistence()
+	refreshTokenPersistence = persistence.NewRefreshTokenPersistence()
 
 	run := m.Run()
 
@@ -38,6 +40,9 @@ func TestMain(m *testing.M) {
 
 	user := model.User{}
 	db.Unscoped().Delete(&user)
+
+	refreshToken := model.RefreshToken{}
+	db.Unscoped().Delete(&refreshToken)
 
 	os.Exit(run)
 }
