@@ -14,6 +14,7 @@ import (
 var db *gorm.DB
 var postPersistence repository.PostRepository
 var goodPersistence repository.GoodRepository
+var userPersistence repository.UserRepository
 
 func TestMain(m *testing.M) {
 	test.InitDB("../../test/")
@@ -24,6 +25,7 @@ func TestMain(m *testing.M) {
 	// 依存関係を注入
 	goodPersistence = persistence.NewGoodPersistence()
 	postPersistence = persistence.NewPostPersistence()
+	userPersistence = persistence.NewUserPersistence()
 
 	run := m.Run()
 
@@ -33,6 +35,9 @@ func TestMain(m *testing.M) {
 
 	good := model.Good{}
 	db.Unscoped().Delete(&good)
+
+	user := model.User{}
+	db.Unscoped().Delete(&user)
 
 	os.Exit(run)
 }

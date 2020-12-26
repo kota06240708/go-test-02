@@ -1,6 +1,8 @@
 package persistence
 
 import (
+	"errors"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/api/domain/model"
@@ -90,7 +92,15 @@ func (up UserPersistence) UpdateUser(DB *gorm.DB, data *model.User) error {
 
 // ユーザー情報を削除
 func (up UserPersistence) DeleteUser(DB *gorm.DB, id int) error {
-	err := DB.Where("id = ?", id).Delete(&model.User{}).Error
+	result := DB.Where("id = ?", id).Delete(&model.User{}).RowsAffected
+
+	var err error
+
+	if result != 0 {
+		err = nil
+	} else {
+		err = errors.New("delete error")
+	}
 
 	return err
 }

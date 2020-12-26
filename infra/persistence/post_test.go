@@ -9,26 +9,36 @@ import (
 )
 
 func TestAddPost(t *testing.T) {
-	post := model.Post{
-		UserId: 100,
-		Text:   "test",
-	}
+	t.Run("success", func(t *testing.T) {
+		post := model.Post{
+			UserId: 100,
+			Text:   "test",
+		}
 
-	_, err := postPersistence.AddPost(db, &post)
+		_, err := postPersistence.AddPost(db, &post)
 
-	getPosts := []*model.Post{}
+		getPosts := []*model.Post{}
 
-	db.Where("user_id = ?", 100).Find(&getPosts)
+		db.Where("user_id = ?", 100).Find(&getPosts)
 
-	assert.Equal(t, err, nil)
-	assert.Equal(t, len(getPosts), 1)
+		assert.Equal(t, err, nil)
+		assert.Equal(t, len(getPosts), 1)
+	})
 }
 
 func TestGetSelectPost(t *testing.T) {
-	post, err := postPersistence.GetSelectPost(db, 1)
+	t.Run("success", func(t *testing.T) {
+		post, err := postPersistence.GetSelectPost(db, 1)
 
-	assert.Equal(t, err, nil)
-	assert.Equal(t, post.Text, "test01")
+		assert.Equal(t, err, nil)
+		assert.Equal(t, post.Text, "test01")
+	})
+
+	t.Run("error", func(t *testing.T) {
+		_, err := postPersistence.GetSelectPost(db, 10000000)
+
+		assert.Equal(t, err != nil, true)
+	})
 }
 
 func TestGetUserPosts(t *testing.T) {
