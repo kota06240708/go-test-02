@@ -22,10 +22,33 @@ func TestGoodAdd(t *testing.T) {
 }
 
 func TestCheckGood(t *testing.T) {
-	// いいねがあるかチェック
-	isGood := goodPersistence.CheckGood(db, 1, 2)
+	t.Run("success", func(t *testing.T) {
+		// いいねがあるかチェック
+		isGood := goodPersistence.CheckGood(db, 1, 2)
 
-	assert.Equal(t, isGood, true)
+		assert.Equal(t, isGood, true)
+	})
+
+	t.Run("error postID", func(t *testing.T) {
+		// いいねがあるかチェック
+		isGood := goodPersistence.CheckGood(db, 1, 20000)
+
+		assert.Equal(t, isGood, false)
+	})
+
+	t.Run("error userID", func(t *testing.T) {
+		// いいねがあるかチェック
+		isGood := goodPersistence.CheckGood(db, 100000000, 2)
+
+		assert.Equal(t, isGood, false)
+	})
+
+	t.Run("error userID postID", func(t *testing.T) {
+		// いいねがあるかチェック
+		isGood := goodPersistence.CheckGood(db, 100000000, 20000000)
+
+		assert.Equal(t, isGood, false)
+	})
 }
 
 // いいねが更新されているかチェック
