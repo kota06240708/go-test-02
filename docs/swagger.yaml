@@ -1,0 +1,289 @@
+definitions:
+  gin.H:
+    additionalProperties: true
+    type: object
+  model.Good:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isGood:
+        type: boolean
+      postId:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+    type: object
+  model.PostRes:
+    properties:
+      createdAt:
+        type: string
+      goodCount:
+        type: integer
+      goods:
+        items:
+          $ref: '#/definitions/model.Good'
+        type: array
+      id:
+        type: integer
+      text:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+        type: object
+      userId:
+        type: integer
+    type: object
+  model.Todo:
+    properties:
+      author:
+        description: ユーザー
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      title:
+        description: todoのタイトル
+        type: string
+    type: object
+  model.User:
+    properties:
+      age:
+        type: integer
+      createdAt:
+        type: string
+      email:
+        type: string
+      goods:
+        items:
+          $ref: '#/definitions/model.Good'
+        type: array
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      posts:
+        items:
+          $ref: '#/definitions/model.PostRes'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  rest.TLoginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  rest.TLoginRes:
+    properties:
+      expire:
+        type: string
+      refreshToken:
+        type: string
+      token:
+        type: string
+    type: object
+  rest.TRefreshToken:
+    properties:
+      expire:
+        type: string
+      token:
+        type: string
+    type: object
+  rest.TRefreshTokenReq:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  rest.postPostReq:
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/example/:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: テスト用APIの詳細
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Todo'
+  /api/v1/login:
+    post:
+      consumes:
+      - application/x-json-stream
+      description: ユーザー認証
+      parameters:
+      - description: リクエスト
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/rest.TLoginReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.TLoginRes'
+      summary: ユーザー認証
+      tags:
+      - auth
+  /api/v1/ping:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: API疎通確認
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: API疎通確認
+      tags:
+      - ping
+  /api/v1/posts/:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: ユーザー一覧を取得
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PostRes'
+      security:
+      - ApiKeyAuth: []
+      summary: ユーザー一覧を取得
+      tags:
+      - post
+  /api/v1/refresh_token:
+    patch:
+      consumes:
+      - application/x-json-stream
+      description: tokenを再発行
+      parameters:
+      - description: リクエスト
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/rest.TRefreshTokenReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.TRefreshToken'
+      security:
+      - ApiKeyAuth: []
+      summary: tokenを再発行
+      tags:
+      - refresh_token
+  /api/v1/self/post:
+    post:
+      consumes:
+      - application/x-json-stream
+      description: 投稿を追加
+      parameters:
+      - description: リクエスト
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/rest.postPostReq'
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: 投稿を追加
+      tags:
+      - self
+  /api/v1/self/post/:id:
+    delete:
+      consumes:
+      - application/x-json-stream
+      description: 指定した投稿を削除
+      parameters:
+      - description: 投稿ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: 指定した投稿を削除
+      tags:
+      - self
+    patch:
+      consumes:
+      - application/x-json-stream
+      description: 指定した投稿を更新
+      parameters:
+      - description: 投稿ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: 指定した投稿を更新
+      tags:
+      - self
+  /api/v1/user/posts/:id:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: 指定したユーザーの投稿を取得
+      parameters:
+      - description: ユーザーID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PostRes'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: 指定したユーザーの投稿を取得
+      tags:
+      - user
+swagger: "2.0"

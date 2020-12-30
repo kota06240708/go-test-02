@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	_ "github.com/api/domain/model"
 	"github.com/api/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +25,11 @@ func NewTodokHandler(tu usecase.TodoUseCase) TodoHandler {
 	}
 }
 
-//Index: Get /todos -> todoデータ一覧取得
+// @description テスト用APIの詳細
+// @version 1.0
+// @accept application/x-json-stream
+// @Success 200 {object} model.Todo
+// @router /api/v1/example/ [get]
 func (th todoHandler) Index(c *gin.Context) {
 	//request：TodoAPIのパラメータ
 	//type requset struct {

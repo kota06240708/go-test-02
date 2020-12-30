@@ -5,10 +5,27 @@ import (
 	"github.com/api/infra/persistence"
 	"github.com/api/middleware"
 	"github.com/api/usecase"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	_ "github.com/api/docs"
 	"github.com/gin-gonic/gin"
 )
 
+// @title APIドキュメントのタイトル
+// @version バージョン(1.0)
+// @description 仕様書に関する内容説明
+// @termsOfService 仕様書使用する際の注意事項
+
+// @contact.name APIサポーター
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name ライセンス(必須)
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:4000
+// @BasePath /
 func StartRouter() *gin.Engine {
 	engine := gin.Default()
 
@@ -76,6 +93,12 @@ func StartRouter() *gin.Engine {
 
 				// posts
 				v1.GET("/posts", postHandler.GetPostAll)
+				v1.GET("/posts/:id", postHandler.GetPostAll)
+
+				user := v1.Group("user")
+				{
+					user.GET("/posts/:id", postHandler.GetUserPosts)
+				}
 
 				// good
 				v1.POST("/good/:id", goodHandler.SetGood)
@@ -95,6 +118,9 @@ func StartRouter() *gin.Engine {
 			}
 		}
 	}
+
+	url := ginSwagger.URL("/swagger/doc.json")
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	return engine
 }

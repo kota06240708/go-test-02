@@ -8,7 +8,7 @@ import (
 
 type Todo struct {
 	Id        uint
-	Title     string
-	Author    string
+	Title     string // todoのタイトル
+	Author    string // ユーザー
 	CreatedAt time.Time
 }

@@ -33,7 +33,16 @@ func NewPostHandler(ph usecase.PostUseCase) PostHandler {
 	}
 }
 
-// ユーザー一覧を取得
+// @description ユーザー一覧を取得
+// @version 1.0
+// @Tags post
+// @Summary ユーザー一覧を取得
+// @accept application/x-json-stream
+// @Security ApiKeyAuth
+// @in header
+// @name Authorization
+// @Success 200 {object} model.PostRes
+// @router /api/v1/posts/ [get]
 func (ph postHandler) GetPostAll(c *gin.Context) {
 
 	// DBデータを取得
@@ -72,13 +81,22 @@ func (ph postHandler) GetCurrentPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, &post)
 }
 
-// 投稿を追加
-func (ph postHandler) AddPost(c *gin.Context) {
-	type TReq struct {
-		Text string `json:"text" validate:"required"`
-	}
+type postPostReq struct {
+	Text string `json:"text" validate:"required"`
+}
 
-	var req TReq
+// @description 投稿を追加
+// @version 1.0
+// @Tags self
+// @Summary 投稿を追加
+// @accept application/x-json-stream
+// @param request body postPostReq false "リクエスト"
+// @Security ApiKeyAuth
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/self/post [post]
+func (ph postHandler) AddPost(c *gin.Context) {
+
+	var req postPostReq
 
 	// reqのデータvalidate
 	if err, errorMessages := util.GetRequestValidate(c, &req); err != nil {
@@ -116,7 +134,15 @@ func (ph postHandler) AddPost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-// 指定した投稿を更新
+// @description 指定した投稿を更新
+// @version 1.0
+// @Tags self
+// @Summary 指定した投稿を更新
+// @accept application/x-json-stream
+// @param id path int true "投稿ID"
+// @Security ApiKeyAuth
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/self/post/:id [PATCH]
 func (ph postHandler) UpdatePost(c *gin.Context) {
 	type TReq struct {
 		Text string `json:"text" validate:"required"`
@@ -162,7 +188,15 @@ func (ph postHandler) UpdatePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-// 指定した投稿を削除
+// @description 指定した投稿を削除
+// @version 1.0
+// @Tags self
+// @Summary 指定した投稿を削除
+// @accept application/x-json-stream
+// @param id path int true "投稿ID"
+// @Security ApiKeyAuth
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/self/post/:id [DELETE]
 func (ph postHandler) DeletePost(c *gin.Context) {
 	postId, errUint := strconv.ParseUint(c.Param("id"), 10, 32)
 
@@ -188,17 +222,22 @@ func (ph postHandler) DeletePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-// 指定したコメントを取得
+// ShowBottle godoc
+// @Summary 指定したユーザーの投稿を取得
+// @Tags user
+// @description 指定したユーザーの投稿を取得
+// @version 1.0
+// @accept application/x-json-stream
+// @param id path int true "ユーザーID"
+// @Security ApiKeyAuth
+// @Success 200 {object} []model.PostRes
+// @router /api/v1/user/posts/:id [GET]
 func (ph postHandler) GetUserPosts(c *gin.Context) {
-	type TReq struct {
-		UserId uint `json:"name" validate:"required"`
-	}
+	postId, errUint := strconv.ParseUint(c.Param("id"), 10, 32)
 
-	var req *TReq
-
-	// reqのデータをbind
-	if err, errorMessages := util.GetRequestValidate(c, &req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "messages": errorMessages})
+	// パースがうまくいったか確認
+	if errUint != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errUint.Error()})
 		return
 	}
 
@@ -206,7 +245,7 @@ func (ph postHandler) GetUserPosts(c *gin.Context) {
 	DB := util.DB(c)
 
 	// DBからデータを取得
-	posts, err := ph.postUseCase.GetUserPosts(DB, req.UserId)
+	posts, err := ph.postUseCase.GetUserPosts(DB, uint(postId))
 
 	// エラーかどうかチェック
 	if err != nil {

@@ -19,6 +19,12 @@ type TLoginReq struct {
 	Email    string `json:"email" validate:"required"`
 }
 
+type TLoginRes struct {
+	Token        string    `json:"token"`
+	RefreshToken string    `json:"refreshToken"`
+	Expire       time.Time `json:"expire"`
+}
+
 type TRefreshToken struct {
 	Token  string    `json:"token"`
 	Expire time.Time `json:"expire"`
@@ -50,7 +56,14 @@ func NewJwtHandler(uu usecase.UserUseCase, ur usecase.RefreshTokenUseCase) JwtHa
 // リフレッシュトークン
 var maxRefresh = time.Hour * 24 * 30 * 6
 
-// ユーザー認証
+// @description ユーザー認証
+// @version 1.0
+// @Tags auth
+// @Summary ユーザー認証
+// @param request body TLoginReq false "リクエスト"
+// @accept application/x-json-stream
+// @Success 200 {object} TLoginRes
+// @router /api/v1/login [POST]
 func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 	var authMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
 		Realm:      "chats",
@@ -202,7 +215,15 @@ func (jh jwtHandler) AuthMiddleware() *jwt.GinJWTMiddleware {
 	return authMiddleware
 }
 
-// tokenを再発行
+// @description tokenを再発行
+// @version 1.0
+// @Tags refresh_token
+// @Summary tokenを再発行
+// @param request body TRefreshTokenReq false "リクエスト"
+// @accept application/x-json-stream
+// @Security ApiKeyAuth
+// @Success 200 {object} TRefreshToken
+// @router /api/v1/refresh_token [PATCH]
 func (jh jwtHandler) RefreshToken(c *gin.Context) {
 	// 型を定義
 	var req TRefreshTokenReq
