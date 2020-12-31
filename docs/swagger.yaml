@@ -112,6 +112,45 @@ definitions:
     required:
     - token
     type: object
+  rest.TUpdatePostReq:
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    type: object
+  rest.TUpdateUserRequset:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      icon:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  rest.TUserAddRequset:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      icon:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - age
+    - email
+    - icon
+    - name
+    - password
+    type: object
   rest.postPostReq:
     properties:
       text:
@@ -133,6 +172,27 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Todo'
+  /api/v1/good/:id:
+    post:
+      consumes:
+      - application/x-json-stream
+      description: いいねを更新
+      parameters:
+      - description: 投稿ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: いいねを更新
+      tags:
+      - good
   /api/v1/login:
     post:
       consumes:
@@ -169,7 +229,7 @@ paths:
     get:
       consumes:
       - application/x-json-stream
-      description: ユーザー一覧を取得
+      description: 投稿を全て取得
       responses:
         "200":
           description: OK
@@ -177,7 +237,7 @@ paths:
             $ref: '#/definitions/model.PostRes'
       security:
       - ApiKeyAuth: []
-      summary: ユーザー一覧を取得
+      summary: 投稿を全て取得
       tags:
       - post
   /api/v1/refresh_token:
@@ -221,7 +281,7 @@ paths:
       - ApiKeyAuth: []
       summary: 投稿を追加
       tags:
-      - self
+      - post
   /api/v1/self/post/:id:
     delete:
       consumes:
@@ -242,13 +302,110 @@ paths:
       - ApiKeyAuth: []
       summary: 指定した投稿を削除
       tags:
-      - self
+      - post
     patch:
       consumes:
       - application/x-json-stream
       description: 指定した投稿を更新
       parameters:
       - description: 投稿ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: リクエスト
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/rest.TUpdatePostReq'
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: 指定した投稿を更新
+      tags:
+      - post
+  /api/v1/self/posts:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: ログインユーザーの投稿
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PostRes'
+      security:
+      - ApiKeyAuth: []
+      summary: ログインユーザーの投稿
+      tags:
+      - post
+  /api/v1/self/user:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: ログインユーザー情報
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+      security:
+      - ApiKeyAuth: []
+      summary: ログインユーザー情報
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/x-json-stream
+      description: ユーザー情報を更新
+      parameters:
+      - description: リクエスト
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/rest.TUpdateUserRequset'
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: ユーザー情報を更新
+      tags:
+      - user
+  /api/v1/signup:
+    post:
+      consumes:
+      - application/x-json-stream
+      description: ユーザーを追加
+      parameters:
+      - description: リクエスト
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/rest.TUserAddRequset'
+      responses:
+        "200":
+          description: 'status": "success"}'
+          schema:
+            $ref: '#/definitions/gin.H'
+      security:
+      - ApiKeyAuth: []
+      summary: ユーザーを追加
+      tags:
+      - user
+  /api/v1/user/:id:
+    delete:
+      consumes:
+      - application/x-json-stream
+      description: idのユーザーを削除
+      parameters:
+      - description: ユーザーID
         in: path
         name: id
         required: true
@@ -260,9 +417,9 @@ paths:
             $ref: '#/definitions/gin.H'
       security:
       - ApiKeyAuth: []
-      summary: 指定した投稿を更新
+      summary: idのユーザーを削除
       tags:
-      - self
+      - user
   /api/v1/user/posts/:id:
     get:
       consumes:
@@ -284,6 +441,23 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 指定したユーザーの投稿を取得
+      tags:
+      - post
+  /api/v1/users:
+    get:
+      consumes:
+      - application/x-json-stream
+      description: ユーザー一覧を取得
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: ユーザー一覧を取得
       tags:
       - user
 swagger: "2.0"

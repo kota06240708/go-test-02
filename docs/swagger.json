@@ -21,6 +21,40 @@
                 }
             }
         },
+        "/api/v1/good/:id": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "いいねを更新",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "good"
+                ],
+                "summary": "いいねを更新",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "投稿ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status\": \"success\"}",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/login": {
             "post": {
                 "description": "ユーザー認証",
@@ -78,14 +112,14 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "ユーザー一覧を取得",
+                "description": "投稿を全て取得",
                 "consumes": [
                     "application/x-json-stream"
                 ],
                 "tags": [
                     "post"
                 ],
-                "summary": "ユーザー一覧を取得",
+                "summary": "投稿を全て取得",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -143,7 +177,7 @@
                     "application/x-json-stream"
                 ],
                 "tags": [
-                    "self"
+                    "post"
                 ],
                 "summary": "投稿を追加",
                 "parameters": [
@@ -178,7 +212,7 @@
                     "application/x-json-stream"
                 ],
                 "tags": [
-                    "self"
+                    "post"
                 ],
                 "summary": "指定した投稿を削除",
                 "parameters": [
@@ -210,13 +244,173 @@
                     "application/x-json-stream"
                 ],
                 "tags": [
-                    "self"
+                    "post"
                 ],
                 "summary": "指定した投稿を更新",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "投稿ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "リクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/rest.TUpdatePostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status\": \"success\"}",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/self/posts": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "ログインユーザーの投稿",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "ログインユーザーの投稿",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.PostRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/self/user": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "ログインユーザー情報",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "ログインユーザー情報",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "ユーザー情報を更新",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "ユーザー情報を更新",
+                "parameters": [
+                    {
+                        "description": "リクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/rest.TUpdateUserRequset"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status\": \"success\"}",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/signup": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "ユーザーを追加",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "ユーザーを追加",
+                "parameters": [
+                    {
+                        "description": "リクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/rest.TUserAddRequset"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status\": \"success\"}",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/:id": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "idのユーザーを削除",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "idのユーザーを削除",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ユーザーID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -244,7 +438,7 @@
                     "application/x-json-stream"
                 ],
                 "tags": [
-                    "user"
+                    "post"
                 ],
                 "summary": "指定したユーザーの投稿を取得",
                 "parameters": [
@@ -263,6 +457,34 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.PostRes"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "ユーザー一覧を取得",
+                "consumes": [
+                    "application/x-json-stream"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "ユーザー一覧を取得",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
                             }
                         }
                     }
@@ -438,6 +660,64 @@
             ],
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.TUpdatePostReq": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.TUpdateUserRequset": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.TUserAddRequset": {
+            "type": "object",
+            "required": [
+                "age",
+                "email",
+                "icon",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

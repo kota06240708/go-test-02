@@ -24,6 +24,17 @@ func NewGoodHandler(gu usecase.GoodUseCase) GoodHandler {
 	}
 }
 
+// @description いいねを更新
+// @version 1.0
+// @Tags good
+// @Summary いいねを更新
+// @accept application/x-json-stream
+// @param id path int true "投稿ID"
+// @Security ApiKeyAuth
+// @in header
+// @name Authorization
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/good/:id [POST]
 func (gh goodHandler) SetGood(c *gin.Context) {
 	type TReq struct {
 		IsGood *bool `json:"isGood" validate:"required"`

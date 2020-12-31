@@ -86,7 +86,7 @@ func StartRouter() *gin.Engine {
 			{
 
 				// user
-				v1.DELETE("/user", userHandler.DeleteUser)
+				v1.DELETE("/user/:id", userHandler.DeleteUser)
 
 				// refreshToken
 				v1.PATCH("/refresh_token", jwtHandler.RefreshToken)
@@ -95,13 +95,13 @@ func StartRouter() *gin.Engine {
 				v1.GET("/posts", postHandler.GetPostAll)
 				v1.GET("/posts/:id", postHandler.GetPostAll)
 
+				// good
+				v1.POST("/good/:id", goodHandler.SetGood)
+
 				user := v1.Group("user")
 				{
 					user.GET("/posts/:id", postHandler.GetUserPosts)
 				}
-
-				// good
-				v1.POST("/good/:id", goodHandler.SetGood)
 
 				self := v1.Group("self")
 				{

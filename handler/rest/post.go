@@ -33,10 +33,10 @@ func NewPostHandler(ph usecase.PostUseCase) PostHandler {
 	}
 }
 
-// @description ユーザー一覧を取得
+// @description 投稿を全て取得
 // @version 1.0
 // @Tags post
-// @Summary ユーザー一覧を取得
+// @Summary 投稿を全て取得
 // @accept application/x-json-stream
 // @Security ApiKeyAuth
 // @in header
@@ -61,7 +61,14 @@ func (ph postHandler) GetPostAll(c *gin.Context) {
 	c.JSON(http.StatusOK, &posts)
 }
 
-// 現在の投稿を受け取る
+// @description ログインユーザーの投稿
+// @version 1.0
+// @Tags post
+// @Summary ログインユーザーの投稿
+// @accept application/x-json-stream
+// @Security ApiKeyAuth
+// @Success 200 {object} model.PostRes
+// @router /api/v1/self/posts [GET]
 func (ph postHandler) GetCurrentPosts(c *gin.Context) {
 	user := util.CurrentUser(c)
 
@@ -86,8 +93,8 @@ type postPostReq struct {
 }
 
 // @description 投稿を追加
-// @version 1.0
-// @Tags self
+// @version 2.0
+// @Tags post
 // @Summary 投稿を追加
 // @accept application/x-json-stream
 // @param request body postPostReq false "リクエスト"
@@ -134,21 +141,23 @@ func (ph postHandler) AddPost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
+type TUpdatePostReq struct {
+	Text string `json:"text" validate:"required"`
+}
+
 // @description 指定した投稿を更新
 // @version 1.0
-// @Tags self
+// @Tags post
 // @Summary 指定した投稿を更新
 // @accept application/x-json-stream
 // @param id path int true "投稿ID"
+// @param request body TUpdatePostReq false "リクエスト"
 // @Security ApiKeyAuth
 // @Success 200 {object} gin.H {"status": "success"}
 // @router /api/v1/self/post/:id [PATCH]
 func (ph postHandler) UpdatePost(c *gin.Context) {
-	type TReq struct {
-		Text string `json:"text" validate:"required"`
-	}
 
-	var req TReq
+	var req TUpdatePostReq
 
 	postId, errUint := strconv.ParseUint(c.Param("id"), 10, 32)
 
@@ -190,7 +199,7 @@ func (ph postHandler) UpdatePost(c *gin.Context) {
 
 // @description 指定した投稿を削除
 // @version 1.0
-// @Tags self
+// @Tags post
 // @Summary 指定した投稿を削除
 // @accept application/x-json-stream
 // @param id path int true "投稿ID"
@@ -224,7 +233,7 @@ func (ph postHandler) DeletePost(c *gin.Context) {
 
 // ShowBottle godoc
 // @Summary 指定したユーザーの投稿を取得
-// @Tags user
+// @Tags post
 // @description 指定したユーザーの投稿を取得
 // @version 1.0
 // @accept application/x-json-stream

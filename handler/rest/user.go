@@ -2,7 +2,9 @@ package rest
 
 import (
 	"net/http"
+	"strconv"
 
+	_ "github.com/api/domain/model"
 	"github.com/api/usecase"
 	"github.com/api/util"
 
@@ -29,7 +31,16 @@ func NewUserkHandler(tu usecase.UserUseCase) UserHandler {
 	}
 }
 
-// ユーザー一覧を取得
+// @description ユーザー一覧を取得
+// @version 1.0
+// @Tags user
+// @Summary ユーザー一覧を取得
+// @accept application/x-json-stream
+// @Security ApiKeyAuth
+// @in header
+// @name Authorization
+// @Success 200 {object} []model.User
+// @router /api/v1/users [GET]
 func (uh userHandler) GetUserAll(c *gin.Context) {
 
 	// DBデータを取得
@@ -48,27 +59,31 @@ func (uh userHandler) GetUserAll(c *gin.Context) {
 	c.JSON(http.StatusOK, &users)
 }
 
-// idのユーザーを削除
+// @description idのユーザーを削除
+// @version 1.0
+// @Tags user
+// @Summary idのユーザーを削除
+// @accept application/x-json-stream
+// @Security ApiKeyAuth
+// @in header
+// @param id path int true "ユーザーID"
+// @name Authorization
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/user/:id [DELETE]
 func (uh userHandler) DeleteUser(c *gin.Context) {
-	//request：TodoAPIのパラメータ
-	type TRequset struct {
-		UserId int `json:"user_id" validate:"required"`
-	}
+	userId, errUint := strconv.Atoi(c.Param("id"))
 
-	// Reqを受け取る
-	var param TRequset
+	// パースがうまくいったか確認
+	if errUint != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errUint.Error()})
+		return
+	}
 
 	// DBデータを取得
 	DB := util.DB(c)
 
-	// validate
-	if err, messages := util.GetRequestValidate(c, &param); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "messages": messages})
-		return
-	}
-
 	// DBにあるデータを削除
-	err := uh.userUseCase.DeleteUser(DB, param.UserId)
+	err := uh.userUseCase.DeleteUser(DB, userId)
 
 	// エラーかどうかチェック
 	if err != nil {
@@ -80,7 +95,16 @@ func (uh userHandler) DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-// 現在のユーザー情報を返す
+// @description ログインユーザー情報
+// @version 1.0
+// @Tags user
+// @Summary ログインユーザー情報
+// @accept application/x-json-stream
+// @Security ApiKeyAuth
+// @in header
+// @name Authorization
+// @Success 200 {object} model.User
+// @router /api/v1/self/user [GET]
 func (uh userHandler) GetCurrentUser(c *gin.Context) {
 	user := util.CurrentUser(c)
 
@@ -88,18 +112,28 @@ func (uh userHandler) GetCurrentUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// ユーザーを追加
-func (uh userHandler) AddUser(c *gin.Context) {
-	//request：TodoAPIのパラメータ
-	type TRequset struct {
-		Name     string `json:"name" validate:"required"`
-		Age      int    `json:"age" validate:"required"`
-		Icon     string `json:"icon" validate:"required"`
-		Password string `json:"password" validate:"required"`
-		Email    string `json:"email" validate:"required"`
-	}
+type TUserAddRequset struct {
+	Name     string `json:"name" validate:"required"`
+	Age      int    `json:"age" validate:"required"`
+	Icon     string `json:"icon" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+}
 
-	var req TRequset
+// @description ユーザーを追加
+// @version 1.0
+// @Tags user
+// @Summary ユーザーを追加
+// @accept application/x-json-stream
+// @param request body TUserAddRequset false "リクエスト"
+// @Security ApiKeyAuth
+// @in header
+// @name Authorization
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/signup [POST]
+func (uh userHandler) AddUser(c *gin.Context) {
+
+	var req TUserAddRequset
 
 	// DBデータを取得
 	DB := util.DB(c)
@@ -137,17 +171,28 @@ func (uh userHandler) AddUser(c *gin.Context) {
 	}
 }
 
-// ユーザー一覧を取得
-func (uh userHandler) UpdateUser(c *gin.Context) {
-	type TRequset struct {
-		Name     string `json:"name"`
-		Age      int    `json:"age"`
-		Icon     string `json:"icon"`
-		Password string `json:"password"`
-		Email    string `json:"email"`
-	}
+type TUpdateUserRequset struct {
+	Name     string `json:"name"`
+	Age      int    `json:"age"`
+	Icon     string `json:"icon"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+}
 
-	var param TRequset
+// @description ユーザー情報を更新
+// @version 1.0
+// @Tags user
+// @Summary ユーザー情報を更新
+// @accept application/x-json-stream
+// @param request body TUpdateUserRequset false "リクエスト"
+// @Security ApiKeyAuth
+// @in header
+// @name Authorization
+// @Success 200 {object} gin.H {"status": "success"}
+// @router /api/v1/self/user [PATCH]
+func (uh userHandler) UpdateUser(c *gin.Context) {
+
+	var param TUpdateUserRequset
 
 	// DBデータを取得
 	DB := util.DB(c)
